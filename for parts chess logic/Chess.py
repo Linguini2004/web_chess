@@ -1,5 +1,7 @@
 import Board
 
+#test
+
 BOARD_SIZE = 8
 chess_board = Board.Board(BOARD_SIZE)
 checkmate = False
