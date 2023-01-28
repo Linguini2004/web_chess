@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <style>
+            .square {
+                height: 1px;
+                width: 1px;
+                /*border-style: solid;
+                /*border-width: 1px;*/
+                border-color: black;  
+            }
+            .blue {
+                background-color: red;
+            }
+            .board {
+                display: flex;
+            }
+            .black {
+                background-color: black;
+            }
+            .white {
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1></h1>
+        <div class="board"></div>
+        <script type="text/javascript">
+            console.log("Hello world")
+
+            const board = document.querySelector(".board")
+            
+            for (let j = 0; j < 200; j++)
+            {
+                const col = document.createElement("div")
+                col.classList = "col"
+
+                for (let i = 1; i < 201; i++)
+                {
+                //const row = document.querySelector(".col")
+                const square = document.createElement("div")
+                square.classList = "square"
+                square.addEventListener("click", (e) => {e.target.classList.toggle("blue")})
+                if (i % 2 == j % 2) {
+                    square.classList.add("black")
+                } else {
+                    square.classList.add("white")
+                }
+                col.appendChild(square)
+                }
+
+                board.append(col)
+            }
+
+        </script>
+    </body>
+</html>
