@@ -2,13 +2,13 @@
     <head>
         <style>
             .square {
-                height: 1px;
-                width: 1px;
-                /*border-style: solid;
-                /*border-width: 1px;*/
+                height: 30px;
+                width: 30px;
+                border-style: solid;
+                border-width: 1px;
                 border-color: black;  
             }
-            .blue {
+            .square.blue {
                 background-color: red;
             }
             .board {
@@ -30,12 +30,12 @@
 
             const board = document.querySelector(".board")
             
-            for (let j = 0; j < 200; j++)
+            for (let j = 0; j < 8; j++)
             {
                 const col = document.createElement("div")
                 col.classList = "col"
 
-                for (let i = 1; i < 201; i++)
+                for (let i = 1; i < 9; i++)
                 {
                 //const row = document.querySelector(".col")
                 const square = document.createElement("div")
