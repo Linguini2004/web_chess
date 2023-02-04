@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <style>
+            .board {
+                border-style: solid;
+                border-width: 2px;
+                display:  flex;
+                position:  center;
+            } 
+
+            .square {
+                height: 50px;
+                width: 50px;
+                border-color: black;  
+            }
+            .square.darken {
+                filter:  brightness(50%);
+            }
+            .black {
+                background-color: slategray;
+            }
+            .white {
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1></h1>
+        <div class="board"></div>
+        <script src="main.js" defer type="module"></script>
+    </body>
+</html>
