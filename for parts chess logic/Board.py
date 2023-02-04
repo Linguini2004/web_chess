@@ -1,4 +1,5 @@
 '''This python file is primarily for creating and modifying the board'''
+
 import Rules
 
 class Board():

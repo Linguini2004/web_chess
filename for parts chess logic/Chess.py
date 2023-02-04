@@ -1,7 +1,5 @@
 import Board
 
-#test
-
 BOARD_SIZE = 8
 chess_board = Board.Board(BOARD_SIZE)
 checkmate = False
@@ -37,6 +35,8 @@ def set_board():
             chess_board.modify(starting_coords[i], "king")
         if 8 <= i < 16 or 16 <= i < 24:
             chess_board.modify(starting_coords[i], "pawn")
+
+    print(chess_board.board_dict)
 
 set_board()
 
