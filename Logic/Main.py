@@ -14,5 +14,6 @@ if __name__ == "__main__":
 
     while not checkmate:
         player = next(players)
+        fen_board = chess_board.fen()
 
 
