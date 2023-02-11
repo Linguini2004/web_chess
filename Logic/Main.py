@@ -14,6 +14,15 @@ if __name__ == "__main__":
 
     while not checkmate:
         player = next(players)
-        fen_board = chess_board.fen()
+        # Wait to receive the new board (or move) from websocket as fen string
+        # Check the move against the rules
+        move = [[1, 1], [1, 2]]
+        if chess_board.check_move(move, player):
+            #chess_board.move_piece(move)
+            pass
+        fen_board = chess_board.fen(player)
+
+
+
 
 
