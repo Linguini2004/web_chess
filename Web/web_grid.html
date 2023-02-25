@@ -9,24 +9,33 @@
             } 
 
             .square {
-                height: 50px;
-                width: 50px;
+                height: 70px;
+                width: 70px;
                 border-color: black;  
             }
             .square.darken {
-                filter:  brightness(50%);
+                filter:  brightness(70%);
             }
             .black {
-                background-color: slategray;
+                background-color: #b58863;
             }
             .white {
-                background-color: white;
+                background-color: #f0d9b5;
+            }
+
+            .square.moveDestination{
+                height: 25px;
+                width: 25px;
+                background-color: #bbb;
+                border-radius: 50%;
+                display: inline-block;
+                align-self: center;
             }
         </style>
     </head>
     <body>
         <h1></h1>
-        <div class="board"></div>
+        <div class="board" oncontextmenu=""></div>
         <script src="main.js" defer type="module"></script>
     </body>
 </html>

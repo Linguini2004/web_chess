@@ -15,16 +15,7 @@ function drawBoard(){
         square.dataset.row = row
         square.dataset.col = col
         square.classList = "square"
-        // square.addEventListener("click", (e) => { // listens for a click
-        //     var length = e.target.classList.length
-        //     if (length != 0){ // if 0 this means user has clicked the image not the square itself
-        //         e.target.classList.toggle("darken") // toggles the blue css 
-        //     }
-        //     else{ 
-        //         let parent = e.target.parentElement // this gets the parent of the image which is the square
-        //         parent.classList.toggle("darken")
-        //     }
-        // })
+
         if (row % 2 == col % 2) {
             square.classList.add("white")
         } else {
@@ -44,7 +35,7 @@ function drawBoard(){
 }
 
 
-function updatePieces(chess_board, visual_board){
+function clearPieces(chess_board, visual_board){
     // sqaure width is a parameter to determine how big the pieces should be
     // board is a list that contains lists of values
 
@@ -64,12 +55,61 @@ function updatePieces(chess_board, visual_board){
 
             const squareWidth = parseInt(getComputedStyle(document.querySelector(".square")).width, 10) // gets square width
 
-            // the piece that is meant to be in that position(square)
-            let correspondingPiece = chess_board[squareRow][squareCol]
-            // if the piece isn't empty
-            if (correspondingPiece != "_"){
-                let img = current_square.querySelector("img")
+            // if the square has an image, remove it
+            let img = current_square.querySelector("img")
+            if (img){
                 img.remove()
+            }
+        }
+    }
+
+    removeDarkenedSquares(chess_board, visual_board, [])
+}
+
+function addMoveDestinations(){
+    const all_columns = visual_board.querySelectorAll(".col") // gets all divs with class "col"
+    for (let q=0; q<all_columns.length; q++){
+        let columns = all_columns[q]
+        let squares = columns.childNodes
+        //console.log(squares)
+        for (let l=0; l<squares.length; l++){
+            let current_square = squares[l] // current visual square on the board
+            current_square.classList.add("moveDestination") // update all css darken styles to be removed
+        }
+    }
+}
+
+function isArrayInArray(source, search) {
+    var searchLen = search.length;
+    for (var i = 0, len = source.length; i < len; i++) {
+        // skip not same length
+        if (source[i].length != searchLen) continue;
+        // compare each element
+        for (var j = 0; j < searchLen; j++) {
+            // if a pair doesn't match skip forwards
+            if (source[i][j] !== search[j]) {
+                break;
+            } else if (j == searchLen - 1) {return true}
+        }
+    }
+    return false; 
+}
+
+
+function removeDarkenedSquares(chess_board, visual_board, exceptions){
+    const all_columns = visual_board.querySelectorAll(".col") // gets all divs with class "col"
+    for (let q=0; q<all_columns.length; q++){
+        let columns = all_columns[q]
+        let squares = columns.childNodes
+        //console.log(squares)
+        for (let l=0; l<squares.length; l++){
+            let current_square = squares[l] // current visual square on the board
+
+            let column = current_square.dataset.col
+            let row = current_square.dataset.row
+
+            if (isArrayInArray(exceptions, [column.toString(), row.toString()]) === false){
+                current_square.classList.remove("darken") // update all css darken styles to be removed
             }
         }
     }
@@ -135,4 +175,4 @@ function getFilenameName(piece){
 }
 
 
-export {drawBoard, drawPieces, updatePieces}
+export {drawBoard, drawPieces, clearPieces, removeDarkenedSquares, addMoveDestinations}
