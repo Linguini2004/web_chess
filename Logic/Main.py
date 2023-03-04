@@ -3,6 +3,15 @@ import Board
 chess_board = Board.Board()
 checkmate = False
 
+def check_valid_move(player, move, board):
+    chess_board = Board.Board()
+    chess_board.load_from_fenstring(board)
+    if chess_board.check_move(move, player):
+        return True
+    else:
+        return False
+
+'''
 def generate_players():
     players = ["white", "black"]
     while True:
@@ -21,7 +30,7 @@ if __name__ == "__main__":
             #chess_board.move_piece(move)
             pass
         fen_board = chess_board.fen(player)
-
+'''
 
 
 

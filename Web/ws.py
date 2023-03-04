@@ -2,6 +2,7 @@ import asyncio
 import json
 import websockets
 import random
+import Logic.Main as logic
 
 games = []
 
@@ -10,6 +11,7 @@ class Player():
         self.websocket = websocket
         self.game = None
         self.fen_string = None
+        self.move = None
         self.recievedMessage = None
 
     async def recieveInfo(self):
@@ -31,6 +33,8 @@ class Game():
     def __init__(self):
         self.players = {"black": None, "white": None}
         self.fen_string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+        self.requested_fen_string = None
+        self.requested_move = None
         self.turn = "white"
 
 
@@ -73,8 +77,11 @@ class Game():
         player = self.players[colour]
         # at the moment the player (from the front end) is sending back just a fen string when they make a move
         message = await player.recieveInfo()
+        #message = [fen_string, [first, second]]
+        self.requested_fen_string = message[0]
+        self.requested_move = message[1]
         print("the server recieved", message)
-        return message
+
 
     def updateFenString(self, string):
         self.fen_string = string
@@ -94,11 +101,14 @@ class Game():
         while True:
             print("in loop")
             await self.sendState()
-            recievedMessage = await self.recieveState(self.turn)
-            self.updateFenString(recievedMessage)
-            self.switchTurn()
-            print("fen_string", self.fen_string, "turn", self.turn)
-
+            await self.recieveState(self.turn)
+            if logic.check_valid_move(self.turn, self.requested_move, self.fen_string):
+                self.updateFenString(self.requested_fen_string)
+                self.switchTurn()
+                print("fen_string", self.fen_string, "turn", self.turn)
+            else:
+                await self.sendState()
+                recievedMessage = await self.recieveState(self.turn)
 
 
 
@@ -134,9 +144,9 @@ async def joinGame(player):
 
 async def main():
     global games
+    print("Starting socket server on port 8001")
     async with websockets.serve(handler, "", 8001, ping_timeout=None):
-        await asyncio.Future()  # run forever
-
+        await asyncio.Future()
 
 if __name__ == "__main__":
     asyncio.run(main())
