@@ -1,6 +1,6 @@
 import Rules
 import ast
-
+import numpy as np
 
 class Board():
     board_dict = {}
@@ -74,63 +74,35 @@ class Board():
         try:
             piece, color = self.board_dict[tuple(start_pos)]
         except ValueError:
-            print("empty cell")
             return False
 
         if color != player:
             print("not the same player")
             return False
 
-        '''
-
-        if not self.check_for_check()[0]:
-            #("starting out of check")
-            if getattr(Rules, piece)(start_pos, final_pos, self.board_dict, player)[0]:
-                self.move_piece(start_pos, final_pos)
-                check, affected_player = self.check_for_check()
-                #print("check after move", check, affected_player)
-                if check and affected_player == player:
-                    return False
-                else:
-                    return True
-            else:
-                return False
-
-        elif self.check_for_check()[0]:
-            #print("starting in check")
-            if getattr(Rules, piece)(start_pos, final_pos, self.board_dict, player)[0]:
-                self.move_piece(start_pos, final_pos)
-                check, affected_player = self.check_for_check()
-                #print("check after move", check, affected_player)
-                if not check:
-                    return True
-                elif check and affected_player != player:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        
-        '''
-
         if getattr(Rules, piece)(start_pos, final_pos, self.board_dict, player)[0]:
+            previous_board_state = dict(self.board_dict)
             self.move_piece(start_pos, final_pos)
-            check, affected_player = self.check_for_check()
-            if check:
-                if affected_player != player:
-                    return True
-                elif affected_player == player:
-                    return False
+            check, affected_player = self.check_for_check()[:2]
+            self.board_dict = previous_board_state
+            if affected_player != "invalid_check":
+                if check:
+                    if affected_player != player:
+                        return True
+                    elif affected_player == player:
+                        return False
+                    else:
+                        print("something went wrong")
                 else:
-                    print("something went wrong")
-            else:
-                return True
+                    return True
         else:
             return False
+
 
     def check_for_check(self):
         kings = [p for p in self.board_dict.items() if p[1][0] == "king"]
         final_pos = [9, 9]
+        checking_pieces = {}
         self.check = None
         for king in kings:
             start_pos = list(king[0])
@@ -142,14 +114,19 @@ class Board():
                     occupant = self.board_dict[tuple(cell)]
                     if occupant != "empty":
                         if occupant[0] == piece and occupant[1] != player:
+                            if self.check != None:
+                                return True, "invalid_check", checking_pieces
                             self.check = player
+                            checking_pieces[tuple(cell)] = occupant
 
-                            return True, self.check
-
-        return False, None
+        if self.check != None:
+            return True, self.check, checking_pieces
+        else:
+            return False, None, None
 
 
     def check_for_checkmate(self):
+
         # if check in the king's current cell
         # we need to check two things
         # first we need to check if the king himself can move out of check
@@ -157,22 +134,58 @@ class Board():
         # Then checking for check in each of these positions
         # secondly if none of these work
 
-        check, player = self.check_for_check()
+        check, player, checking_pieces = self.check_for_check()
         if not check:
             return False, None
 
         king = [p for p in self.board_dict.items() if p[1][0] == "king" and p[1][1] == player]
         king_pos = list(king[0])
 
-    '''
-    def get_adjacent_cells(self):
-        pos = [1, 1]
-        adjacent_cells = []
+        for x in (-1, 0, 1):
+            for y in (-1, 0, 1):
+                pass
 
-        for i in list():
-        if abs(c.x_coord - x_coord) == 1 or abs(c.y_coord - y_coord) == 1:
-            result.append(c)
-    '''
+        adjacent_squares = [[king_pos[0]+x, king_pos[1]+y] for x in (-1, 0, 1) for y in (-1, 0, 1)]
+        size = [[x, y] for x in range(8) for y in range(8)]
+
+        for square in adjacent_squares:
+            if square in size:
+                if self.check_move([king_pos, square], player):
+                    return False
+
+        # ... if we get this far we need to check if another piece can intervene
+        # This includes moving into the path of the checking piece or taking the checking piece
+        # However we will need to check in the event that there are mutliple checking pieces
+        # Can there even be multiple checking pieces?
+        # Apparently there can
+        # So we will need to retrieve the pieces currently checking the king and their lists of moves between them and the king
+        # This part may be slightly harder
+        # Once we've passed the checking pieces onto this function we'll need to check the cells inbetween the piece and the king
+
+        for piece in checking_pieces.items():
+            king_vect = np.array(king_pos)
+            piece_vect = np.array(piece.items[0])
+            direction = np.subtract(king_vect, piece_vect)
+
+
+        # Note it might be cleaner to do this from Rules and have a loop that selects the direction used once the king's position is found withing the valid moves of the checking piece
+
+
+    def check_mate_brute(self):
+
+        check, player, checking_pieces = self.check_for_check()
+        if not check:
+            return False, None
+
+        player_pieces = [piece for piece in self.board_dict.items() if piece[1][1] == player]
+        board_cells = [[x,y] for x in range(8) for y in range(8)]
+        for piece in player_pieces:
+            for destination in board_cells:
+                if self.check_move([piece[0], destination], player):
+                    return False
+
+        return True
+
 
 
 
