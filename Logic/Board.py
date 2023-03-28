@@ -182,9 +182,9 @@ class Board():
         for piece in player_pieces:
             for destination in board_cells:
                 if self.check_move([piece[0], destination], player):
-                    return False
+                    return False, None
 
-        return True
+        return True, player
 
 
 
